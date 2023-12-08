@@ -23,6 +23,7 @@ except Exception as e:
     print(e)
 st.set_page_config(layout="wide")
 
+t.sleep(5)
 # Function to run the main code
 def run_main_code():
    
@@ -48,9 +49,13 @@ def run_main_code():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
+
         date_max=df['Date'].iloc[-1][:10]
+        t.sleep(4)
         df=df[df['Date String']==date_max]
+        t.sleep(3)
         df = df.reset_index(drop=True)
+        t.sleep(3)
 
         import seaborn as sns
         # Seaborn line plot
@@ -60,7 +65,9 @@ def run_main_code():
 
 
         # Set x-axis ticks at regular intervals
+        
         interval = round(len(df)/8)  # Set the interval you want
+        t.sleep(3)
         indices = range(0, len(df['Date'].str.split(" ").str[1]), interval)
         plt.xticks(indices, [df['Date'].str.split(" ").str[1][i] for i in indices],fontsize=20)
         plt.yticks(fontsize=20)
