@@ -1,10 +1,10 @@
 
-import time
+import time as t
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime,time
-
+from datetime import datetime
+from datetime import time as tt
 
 from pymongo.mongo_client import MongoClient
 
@@ -135,8 +135,8 @@ current_time = datetime.now().time()
 run_main_code()
 
 # Auto-refresh every 10 seconds
-while True and current_time <=time(15,45) and current_time >=time(9,25):
-    time.sleep(10)
+while True and current_time <=tt(15,45) and current_time >=tt(9,25):
+    t.sleep(10)
     # Initial run
     current_time = datetime.now().time()
     st.rerun()
