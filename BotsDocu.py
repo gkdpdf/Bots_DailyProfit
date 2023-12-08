@@ -135,7 +135,7 @@ current_time = datetime.now().time()
 run_main_code()
 
 # Auto-refresh every 10 seconds
-while True and current_time <=tt(15,45) and current_time >=tt(9,25):
+while True and current_time <=tt(9,55) and current_time >=tt(3,55):
     t.sleep(10)
     # Initial run
     current_time = datetime.now().time()
