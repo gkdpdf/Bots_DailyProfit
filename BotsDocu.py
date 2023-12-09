@@ -25,8 +25,6 @@ except Exception as e:
     print(e)
 st.set_page_config(layout="wide")
 
-t.sleep(5)
-# Function to run the main code
 
 def run_main_code():
     import pandas as pd
@@ -54,11 +52,11 @@ def run_main_code():
 
 
         date_max=df['Date'].iloc[-1][:10]
-        t.sleep(4)
+        
         df=df[df['Date String']==date_max]
-        t.sleep(3)
+        
         df = df.reset_index(drop=True)
-        t.sleep(3)
+        
 
         import seaborn as sns
         # Seaborn line plot
@@ -154,6 +152,7 @@ def run_main_code():
 
         # Set x-axis ticks at regular intervals
         interval = round(len(df_rs)/3) # Set the interval you want
+        t.sleep(3)
         indices = range(0, len(df_rs['Date'].str.split(" ").str[1]), interval)
         plt.xticks(indices, [df_rs['Date'].str.split(" ").str[1][i] for i in indices],fontsize=24)
         plt.axhline(max(df_rs['Profit']),color='g',linestyle='dotted')
