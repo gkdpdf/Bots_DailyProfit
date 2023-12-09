@@ -453,7 +453,7 @@ Accuracy()
 
 # Auto-refresh every 10 seconds
 while True and current_time <=tt(9,55) and current_time >=tt(3,55):
-    t.sleep(10)
+    t.sleep(100)
     # Initial run
     current_time = datetime.now().time()
     st.rerun()
