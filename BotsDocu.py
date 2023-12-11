@@ -25,18 +25,147 @@ except Exception as e:
     print(e)
 st.set_page_config(layout="wide")
 
+# create database 
+mydb = client["DNS_BNF"]
+
+#create collection
+records =mydb['records']
+
+ab=records.find()
+
+df=pd.DataFrame(ab)
+date_max=df['Date'].iloc[-1][:10]
+
+st.title(f"Summary of BankNifty Bots till {date_max}")
+
+
+
+def summary_trend_roi():
+    col1, col2 = st.columns([5, 5])
+    # create database 
+    mydb_dns = client["DNS_BNF"]
+    #create collection for DNS
+    records =mydb_dns['records']    
+    ab=records.find()
+
+    df=pd.DataFrame(ab)
+    df['Profit'] =df['Profit'].astype(float)
+    df['Date String'] = df['Date'].str[:10]
+
+    # Filter the DataFrame for the desired dates
+    dates_to_extract = list(df['Date String'].unique())
+    filtered_df = df[df['Date String'].isin(dates_to_extract)]
+
+    # Group by 'Date String' and retrieve the last row for each group
+    result = filtered_df.groupby('Date String').last().reset_index()
+
+    # Convert the 'Date' column to datetime format
+    result['Date'] = pd.to_datetime(result['Date'], format='%d/%m/%Y %H:%M:%S:%f')
+
+    # Extract day from the datetime column
+    result['Day'] = result['Date'].dt.day_name()
+    result=result[['Date String','Profit','Day']]
+    result['Bot Name']='DNS'
+
+    #st.dataframe(result[['Date String','Profit','Day']])   
+
+
+    ############### Ratio Spread ######################
+
+    #st.header('Ratio Spread_BNF')
+    # create database 
+    mydb_rs = client["Ratio_spread"]
+    #create collection for DNS
+    records =mydb_rs['records']    
+    cd=records.find()
+
+    df_rs=pd.DataFrame(cd)
+    df_rs['Profit'] =df_rs['Profit'].astype(float)
+    df_rs['Date String'] = df_rs['Date'].str[:10]
+
+    # Filter the DataFrame for the desired damtes
+    dates_to_extract = list(df_rs['Date String'].unique())
+    filtered_df_rs = df_rs[df_rs['Date String'].isin(dates_to_extract)]
+
+    # Group by 'Date String' and retrieve the last row for each group
+    result_rs = filtered_df_rs.groupby('Date String').last().reset_index()
+
+    # Convert the 'Date' column to datetime format
+    result_rs['Date'] = pd.to_datetime(result_rs['Date'], format='%d/%m/%Y %H:%M:%S:%f')
+
+    # Extract day from the datetime column
+    result_rs['Day'] = result_rs['Date'].dt.day_name()
+    result_rs= result_rs[['Date String','Profit','Day']]
+    result_rs['Bot Name']='Ratio Spread'
+
+    #st.dataframe(result_rs[['Date String','Profit','Day']])
+
+    # create database 
+    mydb_dns = client["DNS_BNF"]
+    #create collection for DNS
+    records =mydb_dns['records']    
+    ab=records.find()
+
+    df=pd.DataFrame(ab)
+    df['Profit'] =df['Profit'].astype(float)
+    df['Date String'] = df['Date'].str[:10]
+
+    dates_to_extract = list(df['Date String'].unique())
+
+    # Merge the two DataFrames on the basis of the 'date' and 'datestring' columns
+    merged_df = pd.merge(result, result_rs, left_on='Date String', right_on='Date String', suffixes=('_dns', '_rs'))
+    merged_df = merged_df[['Date String','Profit_dns','Profit_rs','Day_dns']]
+    merged_df['Total Profit']=merged_df['Profit_dns']+merged_df['Profit_rs']
+    merged_df['Cumulative Profit']=merged_df['Total Profit'].cumsum()
+    merged_df['ROI % Intraday']=(merged_df['Total Profit']*15/170000)*100
+    merged_df['ROI % till now']=(merged_df['Cumulative Profit']*15/170000)*100
+
+    with col2:
+    
+        
+        import plotly.express as px
+        
+        fig = px.line(merged_df, x='Date String', y=['ROI % Intraday','ROI % till now'], markers=True)
+
+        tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+        with tab1:
+            st.plotly_chart(fig, theme="streamlit")
+        with tab2:
+            st.plotly_chart(fig, theme=None)
+
+        #st.dataframe(merged_df)
+
+    
+    with col1:
+        df_summ = pd.DataFrame({"Bot_Name":['DNS_BNF','Ratio_spread_BNF'],
+                            "Instrument" : ['Bank Nifty','Bank Nifty'],
+                            "Margin" : ['50K','120K']})
+        st.dataframe(df_summ)
+        import plotly.express as px
+        df = px.data.tips()
+        fig = px.bar(merged_df, x="Total Profit", y="Day_dns",orientation='h',text_auto=True)
+        
+        # Customize data labels
+       # fig.update_traces(textposition='outside', insidetextfont=dict(color='black'))
+
+        # Customize bar color
+        fig.update_traces( marker_color='rgba(191, 230, 221, 0.8)')  # Pinkish color with alpha transparency
+
+        # Set layout properties
+        fig.update_layout(title='Horizontal Bar Chart with Customized Data Labels',
+                        xaxis_title='Profit',
+                        yaxis_title='Day')
+        st.plotly_chart(fig, theme=None)
+
 
 def run_main_code():
     import pandas as pd
-    st.title("Bots Result")
+    
     col1, col2 = st.columns([5, 5])
 
-
     with col1:
-        st.header('DNS_BNF :Intraday', divider='rainbow')
+        st.text('Intraday:DNS')
         
-
-
         # create database 
         mydb = client["DNS_BNF"]
 
@@ -49,50 +178,36 @@ def run_main_code():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+        df['Time']=df['Date'].str[10:16]
 
 
         date_max=df['Date'].iloc[-1][:10]
         
         df=df[df['Date String']==date_max]
-        
+
         df = df.reset_index(drop=True)
         
+    
 
-        import seaborn as sns
-        # Seaborn line plot
-        fig, ax = plt.subplots(figsize=(30, 20))
-        sns.lineplot(data=df,x='Date',y='Profit',color='black')
+        import plotly.express as px
 
-
-
-        # Set x-axis ticks at regular intervals
+       
+        fig = px.line(df, x='Time', y="Profit")
+        fig.update_xaxes(nticks=5)
+        tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+        with tab1:
+            st.plotly_chart(fig, theme="streamlit")
+        with tab2:
+            st.plotly_chart(fig, theme=None)
         
-        interval = round(len(df)/8)  # Set the interval you want
-        t.sleep(3)
-        indices = range(0, len(df['Date'].str.split(" ").str[1]), interval)
-        plt.xticks(indices, [df['Date'].str.split(" ").str[1][i] for i in indices],fontsize=20)
-        plt.yticks(fontsize=20)
-        plt.axhline(max(df['Profit']),color='g',linestyle='dotted')
-        plt.axhline(min(df['Profit']),color='r',linestyle='dotted')
-
-        # Fill the area below the line with red if below 0, and with green if above 0
-        plt.fill_between(df['Date'], df['Profit'], where=(df['Profit'] < 0), color='red', alpha=0.3, label='Below 0')
-        plt.fill_between(df['Date'], df['Profit'], where=(df['Profit'] >= 0), color='green', alpha=0.3, label='Above 0')
-
-        date= "Date of Analysis: " + str(df['Date'].max())[:11]
-        plt.xlabel('Time', fontsize=24)
-        plt.ylabel('MTM', fontsize=24)
-        plt.title(date)
-
-        # Seaborn scatter plot
-        st.pyplot(fig)
+        
+        
         current_profit= df['Profit'].tail(1).values[0]
         st.text("Profit is {}".format(current_profit))
 
-
         ############### DNS ######################
 
-        st.header('DNS_BNF')
+        #st.header('DNS_BNF')
         # create database 
         mydb_dns = client["DNS_BNF"]
         #create collection for DNS
@@ -102,6 +217,7 @@ def run_main_code():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+        
 
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df['Date String'].unique())
@@ -115,14 +231,15 @@ def run_main_code():
 
         # Extract day from the datetime column
         result['Day'] = result['Date'].dt.day_name()
+        result['ROI %']=(result['Profit']*15/50000)*100
 
 
-        st.dataframe(result[['Date String','Profit','Day']])
+        st.dataframe(result[['Date String','Profit','Day','ROI %']])
 
 
     with col2:
 
-        st.header("Ratio_Spread BNF",divider='rainbow')
+        st.text("Intraday:Ratio Spread")
         # create database 
         mydb = client["Ratio_spread"]
 
@@ -136,46 +253,35 @@ def run_main_code():
 
         df_rs['Date String'] = df_rs['Date'].str[:10]
         df_rs['Profit'] =df_rs['Profit'].astype(float)
+        df_rs['Time']=df_rs['Date'].str[10:16]
 
         date_max_rs=df_rs['Date'].iloc[-1][:10]
         df_rs=df_rs[df_rs['Date String']==date_max_rs]
         df_rs = df_rs.reset_index(drop=True)
 
         
-
-        import seaborn as sns
-        # Seaborn line plot
-        fig, ax = plt.subplots(figsize=(30, 20))
-        sns.lineplot(data=df_rs,x='Date',y='Profit',color='black')
-
-
-
-        # Set x-axis ticks at regular intervals
-        interval = round(len(df_rs)/3) # Set the interval you want
-        t.sleep(3)
-        indices = range(0, len(df_rs['Date'].str.split(" ").str[1]), interval)
-        plt.xticks(indices, [df_rs['Date'].str.split(" ").str[1][i] for i in indices],fontsize=24)
-        plt.axhline(max(df_rs['Profit']),color='g',linestyle='dotted')
-        plt.axhline(min(df_rs['Profit']),color='r',linestyle='dotted')
-
-        # Fill the area below the line with red if below 0, and with green if above 0
-        plt.fill_between(df_rs['Date'], df_rs['Profit'], where=(df_rs['Profit'] < 0), color='red', alpha=0.3, label='Below 0')
-        plt.fill_between(df_rs['Date'], df_rs['Profit'], where=(df_rs['Profit'] >= 0), color='green', alpha=0.3, label='Above 0')
-
-        date= "Date of Analysis: " + str(df_rs['Date'].max())[:11]
-        plt.ylabel('MTM',fontsize=24)
-        plt.title(date)
-        # Seaborn scatter plot
-        st.pyplot(fig)
-        current_profitrs= df_rs['Profit'].tail(1).values[0]
-        st.text("Profit is {}".format(current_profitrs))
         
+        import plotly.express as px
+
+       
+        fig = px.line(df_rs, x='Time', y="Profit")
+        fig.update_xaxes(nticks=5)
+        tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+        with tab1:
+            st.plotly_chart(fig, theme="streamlit")
+        with tab2:
+            st.plotly_chart(fig, theme=None)
+
+        
+        
+        current_profit_rs= df_rs['Profit'].tail(1).values[0]
+        st.text("Profit is {}".format(current_profit_rs))
 
       
 
         ############### Ratio Spread ######################
 
-        st.header('Ratio Spread_BNF :Intraday')
+        #st.header('Ratio Spread_BNF :Intraday')
         # create database 
         mydb_rs = client["Ratio_spread"]
         #create collection for DNS
@@ -199,11 +305,12 @@ def run_main_code():
         # Extract day from the datetime column
         result_rs['Day'] = result_rs['Date'].dt.day_name()
         result_rs= result_rs[['Date String','Profit','Day']]
+        result_rs['ROI %']=(result_rs['Profit']*15/120000)*100
 
+        
 
-        st.dataframe(result_rs[['Date String','Profit','Day']])
-
-
+        st.dataframe(result_rs[['Date String','Profit','Day','ROI %']])
+        
 def total_profit_correlation():
     col1, col2 = st.columns([5, 5])
 
@@ -284,9 +391,20 @@ def total_profit_correlation():
         merged_df = pd.merge(result, result_rs, left_on='Date String', right_on='Date String', suffixes=('_dns', '_rs'))
         merged_df = merged_df[['Date String','Profit_dns','Profit_rs','Day_dns']]
         merged_df['Total Profit']=merged_df['Profit_dns']+merged_df['Profit_rs']
+        merged_df['Cumulative Profit']=merged_df['Total Profit'].cumsum()
+        merged_df['ROI % Intraday']=(merged_df['Total Profit']*15/170000)*100
+        merged_df['ROI % till now']=(merged_df['Cumulative Profit']*15/170000)*100
+    
+        
+        import plotly.express as px
+        
+        fig = px.line(merged_df, x='Date String', y=['Profit_dns','Profit_rs','Total Profit','Cumulative Profit'], markers=True)
 
-         # Method 1: Using st.line_chart
-        st.line_chart(merged_df.drop('Day_dns',axis=1).set_index('Date String'),color=["#fd0", "#f0f", "#04f"])
+        tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+        with tab1:
+            st.plotly_chart(fig, theme="streamlit")
+        with tab2:
+            st.plotly_chart(fig, theme=None)
 
         st.dataframe(merged_df)
 
@@ -302,7 +420,8 @@ def total_profit_correlation():
             st.plotly_chart(fig, theme="streamlit")
         with tab2:
             st.plotly_chart(fig, theme=None)
-
+        
+        st.dataframe(merged_df[['Profit_dns','Profit_rs']].corr())
 
 def Accuracy():
     col1, col2 = st.columns([5, 5])
@@ -310,7 +429,7 @@ def Accuracy():
     with col1:
     
         ############### DNS ######################
-        st.header('Total Profit', divider='rainbow')
+        st.header('Accuracy', divider='rainbow')
         # create database 
         mydb_dns = client["DNS_BNF"]
         #create collection for DNS
@@ -422,6 +541,8 @@ def Accuracy():
 
         Net_Profit_dns= result['Profit'].sum()
         Net_Profit_rs=result_rs['Profit'].sum()
+        ROI_dns = (result['Profit'].sum()*15/50000)*100
+        ROI_rs = (result_rs['Profit'].sum()*15/120000)*100
 
 
         fig = go.Figure(go.Funnel(
@@ -436,17 +557,20 @@ def Accuracy():
             st.plotly_chart(fig, theme=None)
 
         a=pd.DataFrame({"Bots":["DNS_BNF", "Ratio_Spread_BNF"],
-                        "Profit":[Net_Profit_dns, Net_Profit_rs]})
+                        "Profit":[Net_Profit_dns, Net_Profit_rs],
+                        "ROI %" :[ROI_dns,ROI_rs]})
         st.dataframe(a)
         
 # Initial run
 current_time = datetime.now().time()
+summary_trend_roi()
+st.divider()
 run_main_code()
 st.divider()
-st.divider()
+
 total_profit_correlation()
 st.divider()
-st.divider()
+
 Accuracy()
 
 
@@ -456,3 +580,4 @@ while True and current_time <=tt(9,55) and current_time >=tt(3,55):
     # Initial run
     current_time = datetime.now().time()
     st.rerun()
+
