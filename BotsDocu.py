@@ -48,9 +48,16 @@ def summary_trend_roi():
     records =mydb_dns['records']    
     ab=records.find()
 
+    
     df=pd.DataFrame(ab)
     df['Profit'] =df['Profit'].astype(float)
     df['Date String'] = df['Date'].str[:10]
+
+    # Replace 'Profit' values with -60 if less than -60
+    df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+    # Group by 'Date' and replace values as needed
+    df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
 
     # Filter the DataFrame for the desired dates
     dates_to_extract = list(df['Date String'].unique())
@@ -65,7 +72,7 @@ def summary_trend_roi():
     # Extract day from the datetime column
     result['Day'] = result['Date'].dt.day_name()
     result=result[['Date String','Profit','Day']]
-    result['Bot Name']='DNS'
+    
 
     #st.dataframe(result[['Date String','Profit','Day']])   
 
@@ -82,6 +89,12 @@ def summary_trend_roi():
     df_rs=pd.DataFrame(cd)
     df_rs['Profit'] =df_rs['Profit'].astype(float)
     df_rs['Date String'] = df_rs['Date'].str[:10]
+
+    # Replace 'Profit' values with -60 if less than -60
+    df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
+    # Group by 'Date' and replace values as needed
+    df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
 
     # Filter the DataFrame for the desired damtes
     dates_to_extract = list(df_rs['Date String'].unique())
@@ -110,6 +123,12 @@ def summary_trend_roi():
     df['Profit'] =df['Profit'].astype(float)
     df['Date String'] = df['Date'].str[:10]
 
+    # Replace 'Profit' values with -60 if less than -60
+    df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+    # Group by 'Date' and replace values as needed
+    df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
     dates_to_extract = list(df['Date String'].unique())
 
     # Merge the two DataFrames on the basis of the 'date' and 'datestring' columns
@@ -137,9 +156,9 @@ def summary_trend_roi():
 
     
     with col1:
-        df_summ = pd.DataFrame({"Bot_Name":['DNS_BNF','Ratio_spread_BNF'],
-                            "Instrument" : ['Bank Nifty','Bank Nifty'],
-                            "Margin" : ['50K','120K']})
+        df_summ = pd.DataFrame({"Bot_Name":['DNS_BNF','Ratio_spread_BNF','Straddle_BNF'],
+                            "Instrument" : ['Bank Nifty','Bank Nifty','Bank Nifty'],
+                            "Margin" : ['50K','120K','120K']})
         st.dataframe(df_summ)
         import plotly.express as px
         df = px.data.tips()
@@ -178,6 +197,13 @@ def run_main_code():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         df['Time']=df['Date'].str[10:16]
 
 
@@ -217,6 +243,12 @@ def run_main_code():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
         
 
         # Filter the DataFrame for the desired dates
@@ -253,6 +285,14 @@ def run_main_code():
 
         df_rs['Date String'] = df_rs['Date'].str[:10]
         df_rs['Profit'] =df_rs['Profit'].astype(float)
+
+        # Replace 'Profit' values with -60 if less than -60
+        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
+
         df_rs['Time']=df_rs['Date'].str[10:16]
 
         date_max_rs=df_rs['Date'].iloc[-1][:10]
@@ -292,6 +332,12 @@ def run_main_code():
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
 
+        # Replace 'Profit' values with -60 if less than -60
+        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df_rs['Date String'].unique())
         filtered_df_rs = df_rs[df_rs['Date String'].isin(dates_to_extract)]
@@ -328,6 +374,12 @@ def total_profit_correlation():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df['Date String'].unique())
         filtered_df = df[df['Date String'].isin(dates_to_extract)]
@@ -358,6 +410,12 @@ def total_profit_correlation():
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
 
+        # Replace 'Profit' values with -60 if less than -60
+        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df_rs['Date String'].unique())
         filtered_df_rs = df_rs[df_rs['Date String'].isin(dates_to_extract)]
@@ -384,6 +442,12 @@ def total_profit_correlation():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
 
         dates_to_extract = list(df['Date String'].unique())
 
@@ -440,6 +504,12 @@ def Accuracy():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df['Date String'].unique())
         filtered_df = df[df['Date String'].isin(dates_to_extract)]
@@ -470,6 +540,12 @@ def Accuracy():
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
 
+        # Replace 'Profit' values with -60 if less than -60
+        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
+
         # Filter the DataFrame for the desired dates
         dates_to_extract = list(df_rs['Date String'].unique())
         filtered_df_rs = df_rs[df_rs['Date String'].isin(dates_to_extract)]
@@ -496,6 +572,12 @@ def Accuracy():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
+
+        # Replace 'Profit' values with -60 if less than -60
+        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+
+        # Group by 'Date' and replace values as needed
+        df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
 
         dates_to_extract = list(df['Date String'].unique())
 
