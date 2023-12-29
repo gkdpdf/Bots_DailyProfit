@@ -53,8 +53,7 @@ def summary_trend_roi():
     df['Profit'] =df['Profit'].astype(float)
     df['Date String'] = df['Date'].str[:10]
 
-    # Replace 'Profit' values with -60 if less than -60
-    df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+   
 
     # Group by 'Date' and replace values as needed
     df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -90,8 +89,7 @@ def summary_trend_roi():
     df_rs['Profit'] =df_rs['Profit'].astype(float)
     df_rs['Date String'] = df_rs['Date'].str[:10]
 
-    # Replace 'Profit' values with -60 if less than -60
-    df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+
 
     # Group by 'Date' and replace values as needed
     df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -123,8 +121,6 @@ def summary_trend_roi():
     df['Profit'] =df['Profit'].astype(float)
     df['Date String'] = df['Date'].str[:10]
 
-    # Replace 'Profit' values with -60 if less than -60
-    df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
 
     # Group by 'Date' and replace values as needed
     df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -198,8 +194,7 @@ def run_main_code():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+ 
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -244,8 +239,7 @@ def run_main_code():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+      
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -286,8 +280,6 @@ def run_main_code():
         df_rs['Date String'] = df_rs['Date'].str[:10]
         df_rs['Profit'] =df_rs['Profit'].astype(float)
 
-        # Replace 'Profit' values with -60 if less than -60
-        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
 
         # Group by 'Date' and replace values as needed
         df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -332,8 +324,6 @@ def run_main_code():
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
 
         # Group by 'Date' and replace values as needed
         df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -374,8 +364,7 @@ def total_profit_correlation():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+        
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -410,9 +399,7 @@ def total_profit_correlation():
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
-
+        
         # Group by 'Date' and replace values as needed
         df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
 
@@ -443,8 +430,7 @@ def total_profit_correlation():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
+        
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -504,8 +490,6 @@ def Accuracy():
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
 
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -539,9 +523,7 @@ def Accuracy():
         df_rs=pd.DataFrame(cd)
         df_rs['Profit'] =df_rs['Profit'].astype(float)
         df_rs['Date String'] = df_rs['Date'].str[:10]
-
-        # Replace 'Profit' values with -60 if less than -60
-        df_rs['Profit'] =  np.where(df_rs['Profit'] < -60, -60, df_rs['Profit'])
+   
 
         # Group by 'Date' and replace values as needed
         df_rs['Profit'] = df_rs.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
@@ -572,9 +554,6 @@ def Accuracy():
         df=pd.DataFrame(ab)
         df['Profit'] =df['Profit'].astype(float)
         df['Date String'] = df['Date'].str[:10]
-
-        # Replace 'Profit' values with -60 if less than -60
-        df['Profit'] =  np.where(df['Profit'] < -60, -60, df['Profit'])
 
         # Group by 'Date' and replace values as needed
         df['Profit'] = df.groupby('Date String')['Profit'].transform(lambda x: -60 if any(x < -60) else x)
